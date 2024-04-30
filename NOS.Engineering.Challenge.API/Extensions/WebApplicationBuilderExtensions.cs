@@ -1,9 +1,12 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using NOS.Engineering.Challenge.Database;
 using NOS.Engineering.Challenge.Managers;
 using NOS.Engineering.Challenge.Models;
+using NOS.Engineering.Challenge.Services;
 
 namespace NOS.Engineering.Challenge.API.Extensions;
 
@@ -29,7 +32,11 @@ public static class WebApplicationBuilderExtensions
 
         serviceCollection
             .RegisterSlowDatabase()
-            .RegisterContentsManager();
+            .RegisterContentsManager()
+            .RegisterDatabase()
+            .RegisterCache();
+        
+
         return webApplicationBuilder;
     }
 
@@ -58,4 +65,21 @@ public static class WebApplicationBuilderExtensions
 
         return webApplicationBuilder;
     }
+
+    private static IServiceCollection RegisterDatabase(this IServiceCollection services)
+    {
+        services.AddSingleton<IMongoDbDatabase<Content, ContentDto>, MongoDbDatabase<Content, ContentDto>>();
+
+        return services;
+    }
+
+    private static IServiceCollection RegisterCache(this IServiceCollection services)
+    {
+        //criar funcão
+        services.AddMemoryCache();
+        services.AddSingleton<IMemoryCacheService, MemoryCacheService>();
+
+        return services;
+    }
+
 }

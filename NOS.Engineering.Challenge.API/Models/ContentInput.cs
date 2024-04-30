@@ -22,7 +22,7 @@ public class ContentInput
             Duration,
             StartTime,
             EndTime,
-            new List<string>()
+            new List<string>().ToArray()
         );
     }
 }

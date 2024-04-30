@@ -10,7 +10,7 @@ public class ContentDto
         int? duration,
         DateTime? startTime,
         DateTime? endTime,
-        IEnumerable<string> genreList)
+        string[] genreList)
     {
         Title = title;
         SubTitle = subTitle;
@@ -29,6 +29,6 @@ public class ContentDto
     public int? Duration { get; set; }
     public DateTime? StartTime { get; set; }
     public DateTime? EndTime { get; set; }
-    public IEnumerable<string> GenreList { get; set; }
+    public string[] GenreList { get; set; }
     
 }
