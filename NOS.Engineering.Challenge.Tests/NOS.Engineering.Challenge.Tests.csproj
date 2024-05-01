@@ -18,6 +18,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\NOS.Engineering.Challenge.Utils\NOS.Engineering.Challenge.Utils.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
         <Using Include="Xunit" />
     </ItemGroup>
 
