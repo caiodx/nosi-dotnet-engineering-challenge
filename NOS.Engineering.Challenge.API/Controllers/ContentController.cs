@@ -14,51 +14,24 @@ namespace NOS.Engineering.Challenge.API.Controllers;
 public class ContentController : Controller
 {
     private readonly IContentsManager _manager;
-    private readonly IMemoryCache _cache;
 
-    public ContentController(IContentsManager manager, IMemoryCache cache)
+    public ContentController(IContentsManager manager)
     {
         _manager = manager;
-        _cache = cache;
     }
 
-    //[Obsolete()]
-    //[HttpGet]
-    //public async Task<IActionResult> GetManyContents()
-    //{
-    //    var contents = await _manager.GetManyContents().ConfigureAwait(false);
-
-    //    if (!contents.Any())
-    //        return NotFound();
-
-    //    return Ok(contents);
-    //}
-
-
-
+    [Obsolete("Use V2 instead")]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<Content?>>> GetManyContents()
+    public async Task<IActionResult> GetManyContents()
     {
-        const string cacheKey = "contents";
+        var contents = await _manager.GetManyContents().ConfigureAwait(false);
 
-        // Verifica se o conteúdo já está no cache
-        var cachedContent = _cache.Get<IEnumerable<Content?>>(cacheKey);
+        if (!contents.Any())
+            return NotFound();
 
-        // Se o cache estiver vazio ou expirado, busca do banco de dados
-
-       //TODO: Implementar expiracao do cache IsCacheExpired(cacheKey))
-        if (cachedContent == null || !_cache.TryGetValue(cacheKey, out cachedContent))
-        {
-            var freshContent = await _manager.GetManyContents().ConfigureAwait(false);
-
-            // Armazena o conteúdo fresco no cache com tempo de expiração
-            _cache.Set(cacheKey, freshContent, TimeSpan.FromMinutes(5)); // Ajustar o tempo de acordo com a necessidade
-
-            cachedContent = freshContent;
-        }
-
-        return Ok(cachedContent);
+        return Ok(contents);
     }
+
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetContent(Guid id)
@@ -107,16 +80,29 @@ public class ContentController : Controller
     )
     {
         var result = await _manager.AddGenres(id, genre);
-
         return result != null ? Ok(result) : NotFound();
     }
     
     [HttpDelete("{id}/genre")]
-    public Task<IActionResult> RemoveGenres(
+    public async Task<IActionResult> RemoveGenres(
         Guid id,
         [FromBody] IEnumerable<string> genre
     )
     {
-        return Task.FromResult<IActionResult>(StatusCode((int)HttpStatusCode.NotImplemented));
+        var result = await _manager.RemoveGenres(id, genre);
+        return result != null ? Ok(result) : NotFound();
     }
+
+    [HttpGet("v2")] //corrigir a rota
+    public async Task<IActionResult> GetManyContents(string Title, string[] Genres)
+    {
+        var contents = await _manager.GetManyContents(Title, Genres).ConfigureAwait(false);
+
+        if (!contents.Any())
+            return NotFound();
+
+        return Ok(contents);
+    }
+
+
 }

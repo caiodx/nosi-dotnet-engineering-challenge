@@ -12,7 +12,7 @@ namespace NOS.Engineering.Challenge.Database
     {
         Task<TOut?> Create(TIn item);
         Task<TOut?> Read(FilterDefinition<TOut> filters);
-        Task<IEnumerable<TOut?>> ReadAll();
+        Task<IEnumerable<TOut?>> ReadAll(FilterDefinition<TOut> filters);
         Task<TOut?> Update(TIn item, FilterDefinition<TOut> filters);
         Task<bool> Delete(FilterDefinition<TOut> filters);
         Task<bool> Update(TOut item, FilterDefinition<TOut> filters);

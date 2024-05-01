@@ -39,9 +39,9 @@ namespace NOS.Engineering.Challenge.Database
             return await _colletion.Find(filters).FirstOrDefaultAsync();             
         }
 
-        public async Task<IEnumerable<TOut?>> ReadAll()
+        public async Task<IEnumerable<TOut?>> ReadAll(FilterDefinition<TOut> filters)
         {
-            return await _colletion.Find(FilterDefinition<TOut>.Empty).ToListAsync();
+            return await _colletion.Find(filters).ToListAsync();
         }
 
         public async Task<TOut?> Update(TIn item, FilterDefinition<TOut> filters)

@@ -1,12 +1,12 @@
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using NOS.Engineering.Challenge.Database;
 using NOS.Engineering.Challenge.Managers;
 using NOS.Engineering.Challenge.Models;
 using NOS.Engineering.Challenge.Services;
+using Serilog;
+using static NOS.Engineering.Challenge.Utils.Enums;
 
 namespace NOS.Engineering.Challenge.API.Extensions;
 
@@ -37,6 +37,8 @@ public static class WebApplicationBuilderExtensions
             .RegisterDatabase()
             .RegisterCache(configuration);
 
+        webApplicationBuilder.ConfigureLogging();
+
         return webApplicationBuilder;
     }
 
@@ -59,9 +61,9 @@ public static class WebApplicationBuilderExtensions
     
     public static WebApplicationBuilder ConfigureWebHost(this WebApplicationBuilder webApplicationBuilder)
     {
-        webApplicationBuilder
-            .WebHost
-            .ConfigureLogging(logging => { logging.ClearProviders(); });
+        //webApplicationBuilder
+        //    .WebHost
+        //    .ConfigureLogging(logging => { logging.ClearProviders(); });
 
         return webApplicationBuilder;
     }
@@ -83,6 +85,25 @@ public static class WebApplicationBuilderExtensions
         services.AddSingleton<IRedisCacheService, RedisCacheService>();
 
         return services;
+    }
+
+    public static WebApplicationBuilder ConfigureLogging(this WebApplicationBuilder webApplicationBuilder)
+    {
+        LoggerConfiguration loggerConfiguration = new();
+        loggerConfiguration.MinimumLevel.Debug();
+
+        switch (GetAppEnviroment())
+        {
+            case AppEnviroment.Development:
+                loggerConfiguration.WriteTo.Console();
+                break;
+            case AppEnviroment.Production:
+                loggerConfiguration.WriteTo.File("logs/apilogs-.txt", rollingInterval: RollingInterval.Day);
+                break;
+        }
+
+        Log.Logger = loggerConfiguration.CreateLogger();
+        return webApplicationBuilder;
     }
 
 }
