@@ -60,13 +60,6 @@ public class ContentController : Controller
         return Ok(cachedContent);
     }
 
-   
-
-
-
-
-
-
     [HttpGet("{id}")]
     public async Task<IActionResult> GetContent(Guid id)
     {

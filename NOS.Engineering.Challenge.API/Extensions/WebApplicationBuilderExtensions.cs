@@ -68,7 +68,7 @@ public static class WebApplicationBuilderExtensions
 
     private static IServiceCollection RegisterDatabase(this IServiceCollection services)
     {
-        services.AddSingleton<IMongoDbDatabase<Content, ContentDto>, MongoDbDatabase<Content, ContentDto>>();
+        services.AddSingleton<IMongoDatabase<Content, ContentDto>, MongoDatabase<Content, ContentDto>>();
 
         return services;
     }

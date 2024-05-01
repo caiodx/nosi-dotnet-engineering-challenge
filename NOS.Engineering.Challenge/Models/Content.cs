@@ -3,11 +3,8 @@ using MongoDB.Bson;
 
 namespace NOS.Engineering.Challenge.Models;
 
-public class Content
-{
-    [BsonId]
-    [BsonElement("_id")]
-    public Guid Id { get; }
+public class Content : ModelBase
+{    
     [BsonElement("title"), BsonRepresentation(BsonType.String)]
     public string Title { get; }
     [BsonElement("sub_title"), BsonRepresentation(BsonType.String)]
@@ -23,10 +20,10 @@ public class Content
     [BsonElement("end_time"), BsonRepresentation(BsonType.DateTime)]
     public DateTime EndTime { get; }
     [BsonElement("genre_list")]
-    public string[] GenreList { get; set; }
+    public IEnumerable<string> GenreList { get; set; }
 
 
-    public Content(Guid id, string title, string subTitle, string description, string imageUrl, int duration, DateTime startTime, DateTime endTime, string[] genreList)
+    public Content(Guid id, string title, string subTitle, string description, string imageUrl, int duration, DateTime startTime, DateTime endTime, IEnumerable<string> genreList)
     {
         Id = id;
         Title = title;
