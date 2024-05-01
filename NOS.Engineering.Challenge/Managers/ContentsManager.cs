@@ -16,6 +16,7 @@ public class ContentsManager : IContentsManager
     private readonly AppEnviroment _enviroment;
     private readonly IRedisCacheService _redisCacheService;
     private readonly ILogger<ContentsManager> _logger;
+    private readonly object _lock = new();
 
     public ContentsManager(IDatabase<Content?, ContentDto> database, IMongoDatabase<Content?, ContentDto> mongoDbDatabase, IRedisCacheService redisCacheService, ILogger<ContentsManager> logger)
     {
@@ -127,6 +128,7 @@ public class ContentsManager : IContentsManager
             {
                 ContentMember = _database.Read(id).ConfigureAwait(false).GetAwaiter().GetResult();
                 _redisCacheService.SetCache(key, ContentMember);
+
             }
             else
             {
@@ -157,6 +159,20 @@ public class ContentsManager : IContentsManager
             {
                 _redisCacheService.SetCache(key, ContentMember);
             }
+
+            key = "Contents";
+            IEnumerable<Content?> contentAllMembers;
+            lock (_lock)
+            {
+                contentAllMembers = _redisCacheService.GetCache<IEnumerable<Content?>>(key).ConfigureAwait(false).GetAwaiter().GetResult();
+                if (contentAllMembers != default)
+                {
+                    contentAllMembers = contentAllMembers.Where(x => x!.Id != id);
+                    _redisCacheService.SetCache(key, contentAllMembers);
+                }
+
+            }
+
         }
 
         Log.Information("Content Updated => {@result}", ContentMember);
@@ -181,6 +197,18 @@ public class ContentsManager : IContentsManager
             {
                 var key = $"Content-{id}";
                 _redisCacheService.DeleteCache(key);
+                key = "Contents";
+                IEnumerable<Content?> contentAllMembers;
+                lock (_lock)
+                {
+                    contentAllMembers = _redisCacheService.GetCache<IEnumerable<Content?>>(key).ConfigureAwait(false).GetAwaiter().GetResult();
+                    if (contentAllMembers != default)
+                    {
+                        contentAllMembers = contentAllMembers.Where(x => x!.Id != deletedId);
+                        _redisCacheService.SetCache(key, contentAllMembers);
+                    }                    
+                }
+               
             }
 
             DeletedMember = deletedId;
