@@ -31,7 +31,7 @@ namespace NOS.Engineering.Challenge.Database
             var id = Guid.NewGuid();
             var createdItem = _mapper.Map(id, item);
             //There is no need to worry about id clashes for this exercise.
-            await _colletion.InsertOneAsync(createdItem);
+            await _colletion.InsertOneAsync(createdItem!);
             return createdItem;
         }
 

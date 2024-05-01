@@ -4,12 +4,7 @@ using NOS.Engineering.Challenge.Services;
 namespace NOS.Engineering.Challenge.Database;
 
 public class MockData : IMockData<Content>    
-{
-    public IMemoryCacheService _memoryCacheService { get; set; }
-    public MockData(IMemoryCacheService memoryCacheService)
-    {
-        _memoryCacheService = memoryCacheService;
-    }
+{   
     public IDictionary<Guid, Content> GenerateMocks()
     {
         IDictionary<Guid, Content> mockContents = new Dictionary<Guid, Content>();
@@ -28,7 +23,6 @@ public class MockData : IMockData<Content>
             var contentObj = new Content(id, title, subTitle, description, imageUrl, duration, startTime, endTime, genres);
 
             mockContents.Add(id, contentObj);
-            _memoryCacheService.SetCache("Content-" + id.ToString(), contentObj);
         }
 
         return mockContents;

@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace NOS.Engineering.Challenge.Services
 {
-    public interface IMemoryCacheService
+    public interface IRedisCacheService
     {
         public void SetCache<T>(string cacheKey, T objeto);
-        public IEnumerable<T?> GetCache<T>(string cacheKey);
+        public Task<T> GetCache<T>(string cacheKey);
+        public void DeleteCache(string cacheKey);
     }
 }

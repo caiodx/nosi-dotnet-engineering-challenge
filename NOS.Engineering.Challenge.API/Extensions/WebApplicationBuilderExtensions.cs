@@ -15,6 +15,7 @@ public static class WebApplicationBuilderExtensions
     public static WebApplicationBuilder RegisterServices(this WebApplicationBuilder webApplicationBuilder)
     {
         var serviceCollection = webApplicationBuilder.Services;
+        var configuration = webApplicationBuilder.Configuration;
 
         serviceCollection.Configure<JsonOptions>(options =>
         {
@@ -34,8 +35,7 @@ public static class WebApplicationBuilderExtensions
             .RegisterSlowDatabase()
             .RegisterContentsManager()
             .RegisterDatabase()
-            .RegisterCache();
-        
+            .RegisterCache(configuration);
 
         return webApplicationBuilder;
     }
@@ -73,11 +73,14 @@ public static class WebApplicationBuilderExtensions
         return services;
     }
 
-    private static IServiceCollection RegisterCache(this IServiceCollection services)
+    private static IServiceCollection RegisterCache(this IServiceCollection services, ConfigurationManager configuration)
     {
-        //criar funcão
-        services.AddMemoryCache();
-        services.AddSingleton<IMemoryCacheService, MemoryCacheService>();
+        services.AddStackExchangeRedisCache(options =>
+        {
+            string connections = configuration.GetConnectionString("Redis")!;
+            options.Configuration = connections;
+        });
+        services.AddSingleton<IRedisCacheService, RedisCacheService>();
 
         return services;
     }
