@@ -8,13 +8,13 @@ public class ContentMapper : IMapper<Content, ContentDto>
     {
         return new Content(
             id,
-            item.Title ?? throw new ArgumentNullException(nameof(item.Title)),
-            item.SubTitle ?? throw new ArgumentNullException(nameof(item.SubTitle)),
-            item.Description ?? throw new ArgumentNullException(nameof(item.Description)),
-            item.ImageUrl ?? throw new ArgumentNullException(nameof(item.ImageUrl)),
-            item.Duration ?? throw new ArgumentNullException(nameof(item.Duration)),
-            item.StartTime ?? throw new ArgumentNullException(nameof(item.StartTime)),
-            item.EndTime ?? throw new ArgumentNullException(nameof(item.EndTime)),
+            item.Title ,
+            item.SubTitle ,
+            item.Description ,
+            item.ImageUrl ,
+            item.Duration ,
+            item.StartTime ,
+            item.EndTime ,
             item.GenreList);
     }
 

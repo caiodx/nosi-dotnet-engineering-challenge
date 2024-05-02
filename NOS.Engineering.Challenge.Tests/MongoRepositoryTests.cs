@@ -41,9 +41,10 @@ namespace NOS.Engineering.Challenge.Tests
         [Fact]
         public void Repository_Read_Should_Return_One_Or_Null()
         {
+            Guid guid = Guid.Parse("8e7c6291-9ab3-47a8-8b27-069ec3fc151d");
             var mongoDatabase = new MongoDatabase<Content, ContentDto>(_configuration, _contetMapper!);
             //var filters = Builders<Content>.Filter.Eq(x => x.Id, Guid.Empty);
-            var filters = Builders<Content>.Filter.Eq(x => x.Id, Guid.Parse("8e7c6291-9ab3-47a8-8b27-069ec3fc151d"));
+            var filters = Builders<Content>.Filter.Eq(x => x.Id, guid);
 
             Content? result = mongoDatabase.Read(filters).GetAwaiter().GetResult();
 
@@ -55,9 +56,17 @@ namespace NOS.Engineering.Challenge.Tests
             {
                 result.Should().BeNull();
             }
-           
-            
-            
+        }
+
+        [Fact]
+        public void Repository_Create_Should_Return_Created_Item_Object()
+        {
+            var mongoDatabase = new MongoDatabase<Content, ContentDto>(_configuration, _contetMapper!);
+            var newContent = new ContentDto("Title Test", "SubTitle Test", "Description Test", null, null, null, null, []);
+            var result = mongoDatabase.Create(newContent).GetAwaiter().GetResult();
+
+            result.Should().NotBeNull();
+            result.Should().BeOfType<Content?>();
         }
 
     }
